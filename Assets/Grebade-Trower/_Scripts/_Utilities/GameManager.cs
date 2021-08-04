@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager gameManager;
 
-    public Transform endPoint;
     public Transform _ProjectileRacePoint;
     public Animator CameraTransition;
 
@@ -20,6 +20,11 @@ public class GameManager : MonoBehaviour
 
 
     public bool isMousePressed;
+    public bool overGrenade;
+    public bool Scene1, Scene2, Scene3;
+
+    [Header("")]
+    public bool isDead;
 
     void Start()
     {
@@ -30,6 +35,13 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (numberOfGrenadeUsed >= numberOfGrenade)
+        {
+            overGrenade = true;
+        }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(0);
+        }
     }
 }

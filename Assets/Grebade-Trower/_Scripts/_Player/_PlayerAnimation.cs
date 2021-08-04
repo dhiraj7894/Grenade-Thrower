@@ -13,6 +13,5 @@ public class _PlayerAnimation : MonoBehaviour
     public void Launch()
     {
         FindObjectOfType<_PlayerProjectile>().Launch();
-        GameManager.gameManager.numberOfGrenadeUsed++;
     }
 }

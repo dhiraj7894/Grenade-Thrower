@@ -30,7 +30,8 @@ public class _PlayerProjectile : MonoBehaviour
 
     private void Update()
     {
-        LaunchPorjectile();        
+        if(!GameManager.gameManager.overGrenade)
+            LaunchPorjectile();        
     }
     Vector3 Vo;
     

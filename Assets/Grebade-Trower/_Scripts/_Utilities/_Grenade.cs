@@ -29,6 +29,7 @@ public class _Grenade : MonoBehaviour
     {
         if (!isNotExplode && timer <= 0)
         {
+            collider.enabled = true;
             if (collider.radius <= explosionArea)
             {
                 collider.radius += Time.deltaTime * explodeSpeed;
@@ -40,9 +41,16 @@ public class _Grenade : MonoBehaviour
             if(collider.radius >= explosionArea)
             {
                 Destroy(this.gameObject, 0.4f);
+                StartCoroutine(increseNumber());
                 isNotExplode = true;
+                
             }
         }
+    }
+    IEnumerator increseNumber()
+    {
+        yield return new WaitForSeconds(0.1f);
+        GameManager.gameManager.numberOfGrenadeUsed++;
     }
     private void OnCollisionEnter(Collision collision)
     {

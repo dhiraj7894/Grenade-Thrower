@@ -11,6 +11,7 @@ TagManager:
   - FxTemporaire
   - Environment
   - grenade
+  - stop
   layers:
   - Default
   - TransparentFX
@@ -21,9 +22,9 @@ TagManager:
   - 
   - 
   - walkP
-  - 
-  - 
-  - 
+  - Enemy
+  - Regdoll
+  - Player
   - 
   - 
   - 
