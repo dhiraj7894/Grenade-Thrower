@@ -9,6 +9,8 @@ public class _PlayerManager : MonoBehaviour
 
     private float turnSmoothVelocity;
     private Animator anime;
+    [SerializeField]private Collider[] hitColliders;
+
 
     public _PlayerRotator RotatorScript;
 
@@ -35,8 +37,9 @@ public class _PlayerManager : MonoBehaviour
 
     
     public List<GameObject> charecters = new List<GameObject>();
-    
 
+    [Header("")]
+    [SerializeField] float DistFromDead;
     void Start()
     {
         AnimationSetup();
@@ -50,11 +53,15 @@ public class _PlayerManager : MonoBehaviour
         AnimationSetup();
         MouseCheck();
         projectileActivator();
+
         nextPointCheck();
+        if(agent.velocity.magnitude<=0 && !GameManager.gameManager.oneEnemyDead)
+            CheckForEnemy();
+
         movement();
         moveToFinalPos();
         GameManager.gameManager._ProjectileRacePoint.position = RotatorScript.PointPos;
-        if (GameManager.gameManager.isDead)
+        if (GameManager.gameManager.isDead && !isCaughtByPolice)
         {
             agent.speed = 0;
             anime.SetBool("isDie", true);
@@ -89,7 +96,7 @@ public class _PlayerManager : MonoBehaviour
             }
             if (isCaughtByPolice)
             {
-                transform.LookAt(NearByEnemies.transform.position);
+                /*transform.LookAt(NearByEnemies.transform.position);*/
                 agent.speed = 0;
                 StartCoroutine(dead());
             }
@@ -99,28 +106,55 @@ public class _PlayerManager : MonoBehaviour
 
     IEnumerator dead()
     {
-        yield return new WaitForSeconds(0.3f);
-        anime.SetBool("isDie", true);
+        yield return new WaitForSeconds(.8f);
+        GameManager.gameManager.isDead = true;
+        if (!isPolice && !isDoctor)
+        {
+            anime.SetBool("isDie", true);
+        }
     }
     public void nextPointCheck()
     {        
         RaycastHit hit;
-        if(Physics.SphereCast(transform.position, rediusOfNextPos, transform.forward, out hit, maxDistanceToDetetct, whatIsNextPoint) && NextPosition==null)
+
+        if(Physics.SphereCast(transform.position, rediusOfNextPos, Vector3.zero, out hit, maxDistanceToDetetct, whatIsNextPoint) && NextPosition==null)
         {
             if(NextPosition==null)
                 NextPosition = hit.transform;
         }
-        if (Physics.SphereCast(transform.position, rediusOfNextPos, transform.forward, out hit, maxDistanceToDetetct, whatIsEnemy) && NearByEnemies==null)
+
+        /*if (Physics.SphereCast(transform.position, rediusOfNextPos, Vector3.zero, out hit, maxDistanceToDetetct, whatIsEnemy) && NearByEnemies==null)
         {
-            if (NearByEnemies == null)
                 NearByEnemies = hit.transform.gameObject;
+        }*/
+
+        /*if (DistFromDead <= 5 && )
             NearByEnemies.GetComponent<_EnemyManager>().detectedByPlayer = true;
+
+        else if (DistFromDead > 5)
+            NearByEnemies = null;*/
+    }
+
+    void CheckForEnemy()
+    {
+        hitColliders = Physics.OverlapSphere(transform.position, maxDistanceToDetetct, whatIsEnemy);
+
+        foreach(Collider hitCol in hitColliders)
+        {
+            if (hitCol != NearByEnemies)
+                NearByEnemies = null;
+
+            if(NearByEnemies == null )
+            {
+                NearByEnemies = hitCol.transform.gameObject;
+                NearByEnemies.GetComponent<_EnemyManager>().detectedByPlayer = true;
+            }
         }
     }
 
     public void movement()
     {
-        if (!GameManager.gameManager.isDead)
+        if (!GameManager.gameManager.isDead && !isClothChnaged)
         {
             if (NearByEnemies == null || !NearByEnemies.GetComponent<_EnemyManager>().isDead)
                 agent.SetDestination(NextPosition.position);
@@ -138,11 +172,9 @@ public class _PlayerManager : MonoBehaviour
         }
     }
 
-    [Header("")]
-    [SerializeField]float DistFromDead;
+    
     void clothChanging()
     {
-
         if(NearByEnemies!=null)
             DistFromDead = Vector3.Distance(transform.position, NearByEnemies.transform.position);
 
@@ -156,12 +188,33 @@ public class _PlayerManager : MonoBehaviour
     }
     IEnumerator startRunning(float t)
     {
-        if (!isPolice)
+        if (!isPolice && NearByEnemies.GetComponent<_EnemyManager>().isPolice)
         {
             yield return new WaitForSeconds(0.5f);
             Spwan.Play();
             isHitman = false;
             isPolice = true;
+            yield return new WaitForSeconds(t);
+            isClothChnaged = true;
+        }
+        if (!isDoctor && NearByEnemies.GetComponent<_EnemyManager>().isDoctor)
+        {
+            yield return new WaitForSeconds(0.5f);
+            Spwan.Play();
+            isHitman = false;
+            isPolice = false;
+            isDoctor = true;
+            yield return new WaitForSeconds(t);
+            isClothChnaged = true;
+        }
+        if (!isPerson && NearByEnemies.GetComponent<_EnemyManager>().isPerson)
+        {
+            yield return new WaitForSeconds(0.5f);
+            Spwan.Play();
+            isHitman = false;
+            isPolice = false;
+            isDoctor = false;
+            isPerson = true;
             yield return new WaitForSeconds(t);
             isClothChnaged = true;
         }
@@ -173,9 +226,9 @@ public class _PlayerManager : MonoBehaviour
         {
             anime = charecters[0].GetComponent<Animator>();
             charecters[0].SetActive(true);
-            /*charecters[1].SetActive(false);
+            charecters[1].SetActive(false);
             charecters[2].SetActive(false);
-            charecters[3].SetActive(false);*/
+            charecters[3].SetActive(false);
         }
 
 
@@ -184,8 +237,8 @@ public class _PlayerManager : MonoBehaviour
             anime = charecters[1].GetComponent<Animator>();
             charecters[1].SetActive(true);
             charecters[0].SetActive(false);
-            /*charecters[2].SetActive(false);
-            charecters[3].SetActive(false);*/
+            charecters[2].SetActive(false);
+            charecters[3].SetActive(false);
         }
 
         if (isDoctor)
@@ -193,8 +246,8 @@ public class _PlayerManager : MonoBehaviour
             anime = charecters[2].GetComponent<Animator>();
             charecters[2].SetActive(true);
             charecters[1].SetActive(false);
-            /*charecters[0].SetActive(false);
-            charecters[3].SetActive(false);*/
+            charecters[0].SetActive(false);
+            charecters[3].SetActive(false);
         }
 
         if (isPerson)
@@ -202,8 +255,8 @@ public class _PlayerManager : MonoBehaviour
             anime = charecters[3].GetComponent<Animator>();
             charecters[3].SetActive(true);
             charecters[1].SetActive(false);
-            /*charecters[2].SetActive(false);
-            charecters[0].SetActive(false);*/
+            charecters[2].SetActive(false);
+            charecters[0].SetActive(false);
         }
     }
 
@@ -216,7 +269,7 @@ public class _PlayerManager : MonoBehaviour
             float targetAngle = Mathf.Atan2(agent.velocity.x, agent.velocity.z) * Mathf.Rad2Deg;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, rotationSmooth);
             transform.rotation = Quaternion.Euler(0, angle, 0);
-        }else if (agent.velocity.magnitude == 0)
+        }else if (agent.velocity.magnitude == 0 && !GameManager.gameManager.isDead)
         {
             anime.SetBool("run", false);
             GameManager.gameManager.CameraTransition.Play("Cam1");

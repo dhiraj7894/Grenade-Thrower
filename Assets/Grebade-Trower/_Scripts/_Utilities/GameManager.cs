@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour
     public bool overGrenade;
     public bool Scene1, Scene2, Scene3;
 
+    public bool oneEnemyDead = false;
+
     [Header("")]
     public bool isDead;
 
@@ -43,5 +45,16 @@ public class GameManager : MonoBehaviour
         {
             SceneManager.LoadScene(0);
         }
+        if (isDead)
+        {
+            StartCoroutine(zoomOverDeadPlayer());
+        }
+
+    }
+
+    IEnumerator zoomOverDeadPlayer()
+    {
+        yield return new WaitForSeconds(0.5f);
+        CameraTransition.Play("Zoom");
     }
 }

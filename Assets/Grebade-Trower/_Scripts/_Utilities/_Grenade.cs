@@ -17,6 +17,10 @@ public class _Grenade : MonoBehaviour
     }
     private void Update()
     {
+
+        if (collider.radius >= explosionArea)
+            collider.radius = explosionArea;
+
         if (timer > 0)
         {
             timer -= Time.deltaTime;

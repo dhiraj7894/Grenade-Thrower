@@ -23377,7 +23377,7 @@ Transform:
   m_GameObject: {fileID: 5064117442836277625}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 10.095, y: 0.805, z: 4.006}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1181873063545154362}
   - {fileID: 4932838902464264294}
@@ -23431,8 +23431,8 @@ MonoBehaviour:
   _Explosion: {fileID: 2642278333659281751}
   collider: {fileID: 5354648947567503210}
   isNotExplode: 0
-  timer: 2.5
-  explosionArea: 5
+  timer: 2
+  explosionArea: 2.3
   explodeSpeed: 30
 --- !u!135 &5354648947567503210
 SphereCollider:

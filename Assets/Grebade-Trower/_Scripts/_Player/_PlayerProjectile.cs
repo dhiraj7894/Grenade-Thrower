@@ -8,6 +8,7 @@ public class _PlayerProjectile : MonoBehaviour
 
     public LineRenderer lineVisual;
     public GameObject TrajectorySpwan;
+    public GameObject Radar;
     public GameObject[] Points;
 
     public int lineSegment;
@@ -21,6 +22,7 @@ public class _PlayerProjectile : MonoBehaviour
         cam = Camera.main;
         lineVisual.positionCount = lineSegment;
         Points = new GameObject[lineSegment];
+        Radar.SetActive(false);
         for (int i = 0; i < lineSegment; i++)
         {
             Points[i] = Instantiate(TrajectorySpwan, transform.position, Quaternion.identity);
@@ -41,11 +43,15 @@ public class _PlayerProjectile : MonoBehaviour
         if (GameManager.gameManager.isMousePressed)
         {
             transform.GetChild(1).gameObject.SetActive(true);
+            Radar.SetActive(true);
             Visualize(Vo);
         }
 
         if (!GameManager.gameManager.isMousePressed)
+        {
             transform.GetChild(1).gameObject.SetActive(false);
+            Radar.SetActive(false);
+        }
     }
     public void Launch()
     {

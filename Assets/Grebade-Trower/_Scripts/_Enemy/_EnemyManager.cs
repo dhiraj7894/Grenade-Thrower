@@ -15,11 +15,14 @@ public class _EnemyManager : MonoBehaviour
     public float rotationSmooth = 0.2f;
     public Transform pos1, pos2;
     private GameObject Mesh1, Mesh2;
+    [Header("")]
     public bool isDead = false;
     public bool chagePlayer = false, detectedByPlayer;
 
     public List<Rigidbody> bones = new List<Rigidbody>();
 
+    [Header("")]
+    public bool isPolice, isDoctor, isPerson, isGaurd;
     void Start()
     {
         lManager = LevelManager.levelManager;
@@ -43,7 +46,11 @@ public class _EnemyManager : MonoBehaviour
         {
             chagePlayer = false;
         }
+        if (isPolice)
             petrolling(pos1.position, pos2.position);
+
+        if(isDoctor)
+            anime.Play("Talking");
 
 
         if (GameObject.Find("Player").GetComponent<_PlayerManager>().isCaughtByPolice)
@@ -61,17 +68,20 @@ public class _EnemyManager : MonoBehaviour
 
         if (isDead)
             die();
+
+        
     }
 
 
     void die()
     {
+        GameManager.gameManager.oneEnemyDead = true;
         agent.speed = 0;
         transform.GetChild(2).gameObject.SetActive(false);
         Mesh1.SetActive(false);
         Mesh2.SetActive(true);
         transform.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
-        StartCoroutine(stopBone(0.5f));
+        StartCoroutine(stopBone(1.3f));
     }
 
     bool reachPos1 = false;
@@ -88,8 +98,9 @@ public class _EnemyManager : MonoBehaviour
                 agent.SetDestination(pos1);
             }
         }
-        if (chagePlayer)
+        if (chagePlayer && !isDoctor && !isPerson)
         {
+            transform.GetChild(2).gameObject.SetActive(false);
             agent.SetDestination(GameObject.Find("Player").transform.position);
         }
 
