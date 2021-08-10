@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
 
     public bool isMousePressed;
     public bool overGrenade;
+    public bool ReachedGoal;
     public bool Scene1, Scene2, Scene3;
 
     public bool oneEnemyDead = false;
@@ -45,11 +46,11 @@ public class GameManager : MonoBehaviour
         {
             SceneManager.LoadScene(0);
         }
-        if (isDead)
+        if (isDead )
         {
             StartCoroutine(zoomOverDeadPlayer());
         }
-
+        levelChanger();
     }
 
     IEnumerator zoomOverDeadPlayer()
@@ -57,4 +58,30 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         CameraTransition.Play("Zoom");
     }
+
+
+    IEnumerator UILoader(float t)
+    {
+        yield return new WaitForSeconds(t);
+        OpenSceneManager.OSM.UIAnime.Play("Fade");
+    }
+
+    void levelChanger()
+    {
+        if (ReachedGoal && !Scene3)
+            StartCoroutine(UILoader(0.2f));
+
+        if (ReachedGoal && Scene1)
+        {
+            OpenSceneManager.OSM.sceneData[0] = false;
+            OpenSceneManager.OSM.sceneData[1] = true;
+        }
+        if (ReachedGoal && Scene2)
+        {
+            OpenSceneManager.OSM.sceneData[1] = false;
+            OpenSceneManager.OSM.sceneData[2] = true;
+        }
+    }
+
+
 }

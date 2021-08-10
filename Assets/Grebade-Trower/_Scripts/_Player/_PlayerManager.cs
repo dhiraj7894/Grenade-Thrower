@@ -47,6 +47,7 @@ public class _PlayerManager : MonoBehaviour
         triggerCollider.enabled = false;
     }
 
+    [SerializeField]float DistFromEnd;
     void Update()
     {
         lookAtPlayer();
@@ -66,6 +67,14 @@ public class _PlayerManager : MonoBehaviour
             agent.speed = 0;
             anime.SetBool("isDie", true);
         }
+
+        DistFromEnd = Vector3.Distance(transform.position, EndPoint.position);
+
+        if(DistFromEnd <= 1.6f)
+        {
+            GameManager.gameManager.ReachedGoal = true;
+        }
+
     }
 
     void moveToFinalPos()
@@ -108,6 +117,7 @@ public class _PlayerManager : MonoBehaviour
     {
         yield return new WaitForSeconds(.8f);
         GameManager.gameManager.isDead = true;
+
         if (!isPolice && !isDoctor)
         {
             anime.SetBool("isDie", true);
